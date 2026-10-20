@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+<header class="topnav">
+  <span class="topnav-title">🏡 积分小屋 · 家长端</span>
+  <nav class="topnav-links">
+    <a href="/parent">待确认</a>
+    <a href="/parent/entry">记账</a>
+    <a href="/parent/ledger">流水</a>
+    <a href="/parent/rules">规则</a>
+    <a href="/parent/settings">设置</a>
+    <form method="post" action="/logout" class="inline"><button class="linklike">退出</button></form>
+  </nav>
+</header>
+<main class="wrap">
+  {% block content %}{% endblock %}
+</main>
+{% endblock %}

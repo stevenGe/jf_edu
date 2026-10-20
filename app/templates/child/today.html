@@ -1,0 +1,66 @@
+{% extends "child/base_child.html" %}
+{% block nav_today %}active{% endblock %}
+{% block content %}
+{% if m %}<div class="banner warn">{{ m }}</div>{% endif %}
+
+<header class="hero">
+  <div class="hero-hi">{{ child_name }}，今天也要加油哦！</div>
+  <div class="hero-balance">⭐ {{ balance }}</div>
+  <div class="hero-sub">
+    今天已入账 <b>+{{ today_points }}</b>
+    {% if pending_total > 0 %} · 有 {{ pending_total }} 条等家长确认{% endif %}
+  </div>
+</header>
+
+<section>
+  <h2>📋 今日任务</h2>
+  {% for it in daily %}
+  <div class="card task {% if it.full %}done{% endif %}">
+    <div class="task-icon">{{ it.rule.icon }}</div>
+    <div class="task-main">
+      <div class="task-name">{{ it.rule.name }}</div>
+      <div class="task-pts">+{{ it.rule.points }} 分
+        {% if it.limit > 1 %}<span class="task-progress">{{ it.total }}/{{ it.limit }}</span>{% endif %}
+      </div>
+    </div>
+    {% if it.full and it.pending > 0 %}
+      <span class="chip pending">⏳ 待确认</span>
+    {% elif it.full %}
+      <span class="chip ok">✓ 完成</span>
+    {% else %}
+      <form method="post" action="/checkin/{{ it.rule.id }}">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <button class="btn primary round">打卡</button>
+      </form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty">还没有任务，等爸爸妈妈添加～</div>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>📅 本周任务</h2>
+  {% for it in weekly %}
+  <div class="card task {% if it.full %}done{% endif %}">
+    <div class="task-icon">{{ it.rule.icon }}</div>
+    <div class="task-main">
+      <div class="task-name">{{ it.rule.name }}</div>
+      <div class="task-pts">+{{ it.rule.points }} 分</div>
+    </div>
+    {% if it.full and it.pending > 0 %}
+      <span class="chip pending">⏳ 待确认</span>
+    {% elif it.full %}
+      <span class="chip ok">✓ 完成</span>
+    {% else %}
+      <form method="post" action="/checkin/{{ it.rule.id }}">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <button class="btn primary round">打卡</button>
+      </form>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="empty">本周没有任务</div>
+  {% endfor %}
+</section>
+{% endblock %}

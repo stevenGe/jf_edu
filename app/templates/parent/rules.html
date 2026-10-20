@@ -1,0 +1,54 @@
+{% extends "parent/base_parent.html" %}
+{% block content %}
+<h2>⚙️ 规则管理</h2>
+{% if m %}<div class="banner warn">{{ m }}</div>{% endif %}
+<p class="hint">调分值、改次数、上下架都在这里。建议改动和孩子商量后再保存（家庭会议 🤝）。</p>
+
+<h3>每日任务</h3>
+{% for r in rules if r.period == 'daily' %}
+<form method="post" action="/parent/rules/{{ r.id }}" class="card rule-form">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="rule-grid">
+    <input name="icon" value="{{ r.icon }}" class="icon-input" maxlength="4" title="图标">
+    <input name="name" value="{{ r.name }}" class="name-input">
+    <label class="mini">分值<input type="number" name="points" value="{{ r.points }}"></label>
+    <label class="mini">次数/日<input type="number" name="daily_limit" value="{{ r.daily_limit }}" min="1"></label>
+    <label class="mini check"><input type="checkbox" name="auto_confirm" {% if r.auto_confirm %}checked{% endif %}>打卡即入账</label>
+    <label class="mini check"><input type="checkbox" name="active" {% if r.active %}checked{% endif %}>上架</label>
+    <button class="btn primary sm">保存</button>
+  </div>
+</form>
+{% endfor %}
+
+<h3>每周任务</h3>
+{% for r in rules if r.period == 'weekly' %}
+<form method="post" action="/parent/rules/{{ r.id }}" class="card rule-form">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="rule-grid">
+    <input name="icon" value="{{ r.icon }}" class="icon-input" maxlength="4" title="图标">
+    <input name="name" value="{{ r.name }}" class="name-input">
+    <label class="mini">分值<input type="number" name="points" value="{{ r.points }}"></label>
+    <label class="mini">次数/周<input type="number" name="daily_limit" value="{{ r.daily_limit }}" min="1"></label>
+    <label class="mini check"><input type="checkbox" name="auto_confirm" {% if r.auto_confirm %}checked{% endif %}>打卡即入账</label>
+    <label class="mini check"><input type="checkbox" name="active" {% if r.active %}checked{% endif %}>上架</label>
+    <button class="btn primary sm">保存</button>
+  </div>
+</form>
+{% endfor %}
+
+<details class="card">
+  <summary>➕ 新增规则</summary>
+  <form method="post" action="/parent/rules" class="stack" style="margin-top:12px">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <div class="rule-grid">
+      <input name="icon" value="⭐" class="icon-input" maxlength="4">
+      <input name="name" placeholder="规则名称" class="name-input" required>
+      <label class="mini">分值<input type="number" name="points" value="1" required></label>
+      <label class="mini">次数<input type="number" name="daily_limit" value="1" min="1"></label>
+      <select name="period"><option value="daily">每日</option><option value="weekly">每周</option></select>
+      <select name="category"><option value="study">学习</option><option value="focus">专注</option><option value="honest">诚实</option><option value="sport">运动</option></select>
+      <button class="btn primary sm">添加</button>
+    </div>
+  </form>
+</details>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "child/base_child.html" %}
+{% block nav_history %}active{% endblock %}
+{% block content %}
+<header class="hero small">
+  <div class="hero-hi">我的每一分</div>
+  <div class="hero-balance">⭐ {{ balance }}</div>
+</header>
+
+<section>
+  {% for r in rows %}
+  <div class="card row {% if r.tx.status == 'rejected' %}muted{% endif %}">
+    <div class="row-icon">{{ r.icon }}</div>
+    <div class="row-main">
+      <div class="row-name">
+        {{ r.name }}
+        {% if r.tx.note %}<span class="row-note">{{ r.tx.note }}</span>{% endif %}
+      </div>
+      <div class="row-sub">{{ r.tx.created_at.strftime('%m-%d %H:%M') }}</div>
+    </div>
+    <div class="row-right">
+      <div class="pts {% if r.tx.points < 0 %}neg{% endif %}">{{ '%+d' % r.tx.points }}</div>
+      {% if r.tx.status == 'pending' %}<span class="chip pending">待确认</span>
+      {% elif r.tx.status == 'confirmed' %}<span class="chip ok">已入账</span>
+      {% else %}<span class="chip rejected">未通过</span>{% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty">还没有记录，去打个卡吧！</div>
+  {% endfor %}
+</section>
+{% endblock %}

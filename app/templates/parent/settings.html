@@ -1,0 +1,35 @@
+{% extends "parent/base_parent.html" %}
+{% block content %}
+<h2>🔧 设置</h2>
+{% if m %}<div class="banner warn">{{ m }}</div>{% endif %}
+
+<div class="card">
+  <h3>🔑 修改我的密码（{{ parent.name }}）</h3>
+  <form method="post" action="/parent/settings/password" class="stack">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <input type="password" name="old_password" placeholder="旧密码" required autocomplete="current-password">
+    <input type="password" name="new_password" placeholder="新密码（至少 6 位）" required minlength="6" autocomplete="new-password">
+    <button class="btn primary">保存</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>🔢 修改孩子的 PIN{% if child %}（{{ child.name }}）{% endif %}</h3>
+  <form method="post" action="/parent/settings/pin" class="stack">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <input name="new_pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="新 PIN（4 位数字）" required>
+    <button class="btn primary">保存</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>👨‍👩‍👧 添加家长账号</h3>
+  <p class="hint">现有家长：{% for p in parents %}{{ p.name }}{% if not loop.last %}、{% endif %}{% endfor %}</p>
+  <form method="post" action="/parent/settings/add-parent" class="stack">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <input name="name" placeholder="用户名（如：妈妈）" required>
+    <input type="password" name="password" placeholder="密码（至少 6 位）" required minlength="6">
+    <button class="btn">添加</button>
+  </form>
+</div>
+{% endblock %}

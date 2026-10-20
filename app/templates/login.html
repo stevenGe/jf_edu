@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="wrap login-wrap">
+  <div class="login-logo">🏡 积分小屋</div>
+  {% if error %}<div class="banner warn">{{ error }}</div>{% endif %}
+
+  <div class="card">
+    <h2>🧒 我是孩子</h2>
+    <form method="post" action="/login" class="stack">
+      <input type="hidden" name="role" value="child">
+      <input class="pin-input" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+             placeholder="• • • •" autocomplete="off" autofocus>
+      <button class="btn primary block">进入</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>👨‍👩‍👧 我是家长</h2>
+    <form method="post" action="/login" class="stack">
+      <input type="hidden" name="role" value="parent">
+      <input name="name" placeholder="用户名（如：爸爸）" autocomplete="username">
+      <input type="password" name="password" placeholder="密码" autocomplete="current-password">
+      <button class="btn block">登录</button>
+    </form>
+  </div>
+</main>
+{% endblock %}

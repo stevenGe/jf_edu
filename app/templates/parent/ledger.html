@@ -1,0 +1,52 @@
+{% extends "parent/base_parent.html" %}
+{% block content %}
+<h2>📖 积分流水</h2>
+{% if m %}<div class="banner warn">{{ m }}</div>{% endif %}
+
+<div class="filter">
+  <span class="stat-inline">当前余额 ⭐ {{ balance }}</span>
+  <a href="/parent/ledger" class="chip {% if not status %}on{% endif %}">全部</a>
+  <a href="/parent/ledger?status=pending" class="chip {% if status == 'pending' %}on{% endif %}">待确认</a>
+  <a href="/parent/ledger?status=confirmed" class="chip {% if status == 'confirmed' %}on{% endif %}">已入账</a>
+  <a href="/parent/ledger?status=rejected" class="chip {% if status == 'rejected' %}on{% endif %}">未通过</a>
+</div>
+
+<section>
+  {% for r in rows %}
+  <div class="card row {% if r.reversed %}struck{% endif %}">
+    <div class="row-icon">{{ r.icon }}</div>
+    <div class="row-main">
+      <div class="row-name">
+        {{ r.name }}
+        {% if r.tx.source == 'reversal' %}<span class="chip reversal">冲正</span>{% endif %}
+        {% if r.tx.note %}<span class="row-note">{{ r.tx.note }}</span>{% endif %}
+      </div>
+      <div class="row-sub">{{ r.tx.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+    </div>
+    <div class="row-right">
+      <div class="pts {% if r.tx.points < 0 %}neg{% endif %}">{{ '%+d' % r.tx.points }}</div>
+      {% if r.tx.status == 'pending' %}<span class="chip pending">待确认</span>
+      {% elif r.tx.status == 'confirmed' %}<span class="chip ok">{% if r.reversed %}已冲正{% else %}已入账{% endif %}</span>
+      {% else %}<span class="chip rejected">未通过</span>{% endif %}
+      {% if r.tx.status == 'confirmed' and not r.reversed and r.tx.reversal_of is none %}
+      <form method="post" action="/parent/tx/{{ r.tx.id }}/reverse" class="inline">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <input type="hidden" name="note" value="">
+        <button class="linklike danger" onclick="return confirm('冲正会追加一条等额反向记录，确定吗？')">冲正</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty">暂无记录</div>
+  {% endfor %}
+</section>
+
+{% if total_pages > 1 %}
+<div class="pager">
+  {% if page > 1 %}<a class="btn ghost sm" href="/parent/ledger?page={{ page - 1 }}&status={{ status }}">上一页</a>{% endif %}
+  <span class="stat-inline">第 {{ page }} / {{ total_pages }} 页</span>
+  {% if page < total_pages %}<a class="btn ghost sm" href="/parent/ledger?page={{ page + 1 }}&status={{ status }}">下一页</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

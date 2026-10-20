@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<header class="topbar">
+  <span class="topbar-title">🏡 积分小屋</span>
+  <span class="topbar-balance">⭐ {{ balance }}</span>
+</header>
+<main class="wrap with-bottomnav">
+  {% block content %}{% endblock %}
+</main>
+<nav class="bottomnav">
+  <a href="/" class="bottomnav-item {% block nav_today %}{% endblock %}">📋 今日</a>
+  <a href="/history" class="bottomnav-item {% block nav_history %}{% endblock %}">📒 记录</a>
+</nav>
+{% endblock %}

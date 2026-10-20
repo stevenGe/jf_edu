@@ -1,0 +1,51 @@
+{% extends "parent/base_parent.html" %}
+{% block content %}
+{% if m %}<div class="banner warn">{{ m }}</div>{% endif %}
+
+<div class="stat-grid">
+  <div class="card stat">
+    <div class="stat-label">孩子余额</div>
+    <div class="stat-value">⭐ {{ balance }}</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-label">本周入账</div>
+    <div class="stat-value">+{{ week_points }}</div>
+  </div>
+  <div class="card stat {% if rows %}hot{% endif %}">
+    <div class="stat-label">待我确认</div>
+    <div class="stat-value">{{ rows | length }}</div>
+  </div>
+</div>
+
+{% if child is none %}
+<div class="banner warn">还没有孩子账号，请用 <code>python -m app.init_db</code> 初始化种子账号。</div>
+{% endif %}
+
+<section>
+  <h2>⏳ 待确认的打卡</h2>
+  {% for r in rows %}
+  <div class="card row">
+    <div class="row-icon">{{ r.icon }}</div>
+    <div class="row-main">
+      <div class="row-name">{{ r.child.name if r.child }} · {{ r.name }}</div>
+      <div class="row-sub">
+        {{ r.tx.created_at.strftime('%m-%d %H:%M') }} · {{ '%+d' % r.tx.points }} 分
+        {% if r.tx.note %} · {{ r.tx.note }}{% endif %}
+      </div>
+    </div>
+    <div class="row-actions">
+      <form method="post" action="/parent/tx/{{ r.tx.id }}/confirm">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <button class="btn primary sm">✓ 确认</button>
+      </form>
+      <form method="post" action="/parent/tx/{{ r.tx.id }}/reject">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <button class="btn ghost sm">驳回</button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty">没有待确认的打卡 👍</div>
+  {% endfor %}
+</section>
+{% endblock %}
